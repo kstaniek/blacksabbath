@@ -4,7 +4,7 @@ networks:
     
 services:
   cadvisor:
-    image: gcr.io/google-containers/cadvisor:v0.34.0
+    image: gcr.io/google-containers/cadvisor:v0.55.1
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:rw
