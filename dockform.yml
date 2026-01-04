@@ -20,6 +20,9 @@ stacks:
   glance:
     root: apps/glance
 
+  grafana:
+    root: apps/grafana
+    
   netbox:
     root: apps/netbox
     secrets:
