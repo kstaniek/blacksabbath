@@ -14,6 +14,12 @@ stacks:
       sops:
         - secrets.1password.enc.env
 
+  alertmanager:
+    root: apps/alertmanager
+    secrets:
+      sops:
+        - secrets.gotify.enc.env
+
   cadvisor:
     root: apps/cadvisor
 
