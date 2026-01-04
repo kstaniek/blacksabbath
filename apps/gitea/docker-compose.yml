@@ -13,6 +13,8 @@ services:
     restart: always
     networks:
       - proxy-net
+    extra_hosts:
+      - "authentik.home.staniek.name:host-gateway"
     healthcheck:
       test: ["CMD", "curl", "-fSs", "http://localhost:3000/api/healthz" ]
       interval: 10s
