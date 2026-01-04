@@ -65,6 +65,7 @@ stacks:
 
 networks:
   1password-net:
+  auth-net:
   monitoring-net:
   netbox-net:
   proxy-net:
