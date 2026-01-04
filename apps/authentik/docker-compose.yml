@@ -1,0 +1,97 @@
+networks:
+  default:
+  auth-net:
+    external: true
+  proxy-net:
+    external: true
+
+services:
+  postgresql:
+    healthcheck:
+      interval: 30s
+      retries: 5
+      start_period: 20s
+      test:
+      - CMD-SHELL
+      - pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}
+      timeout: 5s
+    image: docker.io/library/postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+    - pg_database:/var/lib/postgresql/data
+
+  authentik-server:
+    command: server
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    env_file:
+      - authentik.env
+    environment:
+      - AUTHENTIK_SECRET_KEY=${AUTHENTIK_SECRET_KEY}
+      - AUTHENTIK_POSTGRESQL__PASSWORD=${POSTGRES_PASSWORD}
+      - AUTHENTIK_POSTGRESQL__USER=${POSTGRES_USER}
+      - AUTHENTIK_POSTGRESQL__NAME=${POSTGRES_DB}
+    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2025.10.1}
+    # ports:
+    # - ${COMPOSE_PORT_HTTP:-9000}:9000
+    # - ${COMPOSE_PORT_HTTPS:-9443}:9443
+    restart: unless-stopped
+    networks:
+      - proxy-net
+      - auth-net
+      - default
+    volumes:
+    - /opt/docker-data/authentik/media:/media
+    - /opt/docker-data/authentik/custom-templates:/templates
+    labels:
+      traefik.enable: true
+      traefik.http.routers.authentik.rule: Host(`authentik.home.staniek.name`)
+      traefik.http.services.authentik.loadbalancer.server.port: 9000
+      traefik.http.routers.authentik.entrypoints: websecure
+      traefik.http.routers.authentik.tls.certresolver: letsencrypt
+
+  authentik-worker:
+    command: worker
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    environment:
+      - AUTHENTIK_SECRET_KEY=${AUTHENTIK_SECRET_KEY}
+      - AUTHENTIK_POSTGRESQL__PASSWORD=${POSTGRES_PASSWORD}
+      - AUTHENTIK_POSTGRESQL__USER=${POSTGRES_USER}
+      - AUTHENTIK_POSTGRESQL__NAME=${POSTGRES_DB}
+    env_file:
+      - authentik.env
+    image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2025.10.1}
+    restart: unless-stopped
+    user: root
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /opt/docker-data/authentik/media:/media
+    - /opt/docker-data/authentik/certs:/certs
+    - /opt/docker-data/authentik/custom-templates:/templates
+
+  authentik-ldap:
+        image: ${AUTHENTIK_OUTPUT_LDAP_IMAGE:-ghcr.io/goauthentik/ldap}:${AUTHENTIK_TAG:-2025.10.1}
+        # Optionally specify the container's network, which must be able to reach the core authentik server.
+        # networks:
+        #   - foo
+        # ports:
+        #     - 389:3389
+        #     - 636:6636
+        networks:
+          - auth-net
+        environment:
+          - AUTHENTIK_TOKEN=${AUTHENTIK_TOKEN_LDAP}
+        env_file:
+            - ldap.env
+        restart: unless-stopped
+
+volumes:
+  pg_database:
+    driver: local

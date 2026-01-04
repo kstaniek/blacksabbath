@@ -20,6 +20,13 @@ stacks:
       sops:
         - secrets.gotify.enc.env
 
+  authentik:
+    root: apps/authentik
+    secrets:
+      sops:
+        - secrets.authentik.enc.env
+        - secrets.postgres.enc.env
+
   cadvisor:
     root: apps/cadvisor
 
