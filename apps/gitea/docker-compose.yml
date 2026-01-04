@@ -14,7 +14,7 @@ services:
     networks:
       - proxy-net
     extra_hosts:
-      - "authentik.home.staniek.name:host-gateway"
+      - "authentik.home.staniek.name:172.26.0.4"
     healthcheck:
       test: ["CMD", "curl", "-fSs", "http://localhost:3000/api/healthz" ]
       interval: 10s
