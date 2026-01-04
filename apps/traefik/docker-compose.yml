@@ -14,6 +14,12 @@ services:
       traefik.http.routers.dashboard.service: api@internal
       traefik.http.routers.dashboard.entrypoints: websecure
       traefik.http.routers.dashboard.tls.certresolver: letsencrypt
+      glance.name: Traefik
+      glance.icon: sh:traefik
+      glance.url: https://traefik.home.staniek.name
+      glance.description: "Traefik Dashboard"
+      glance.id: traefik
+
     environment:
       - CLOUDFLARE_DNS_API_TOKEN=${CLOUDFLARE_DNS_API_TOKEN}
     networks:
