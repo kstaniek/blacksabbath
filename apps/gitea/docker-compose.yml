@@ -35,4 +35,12 @@ services:
       glance.icon: sh:gitea
       glance.description: Git Service
       glance.url: https://gitea.home.staniek.name
+
+  volsync:
+    image: jtreminio/volsync
+    # environment:
+    #   - PRESYNC=1
+    volumes:
+      - /opt/docker-data/gitea/data:/vol/container/gitea-data
+      - /opt/backup/gitea/data:/vol/host/gitea-data
   
