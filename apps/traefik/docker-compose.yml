@@ -24,6 +24,7 @@ services:
       - CLOUDFLARE_DNS_API_TOKEN=${CLOUDFLARE_DNS_API_TOKEN}
     networks:
       - proxy-net
+      - auth-net
     restart: unless-stopped
     ports:
       - "80:80"
@@ -35,6 +36,8 @@ services:
 
 networks:
   proxy-net:
+    external: true
+  auth-net:
     external: true
 
 configs:

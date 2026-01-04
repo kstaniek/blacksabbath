@@ -2,8 +2,6 @@ networks:
   default:
   auth-net:
     external: true
-  proxy-net:
-    external: true
 
 services:
   postgresql:
@@ -42,7 +40,6 @@ services:
     # - ${COMPOSE_PORT_HTTPS:-9443}:9443
     restart: unless-stopped
     networks:
-      - proxy-net
       - auth-net
       - default
     volumes:
