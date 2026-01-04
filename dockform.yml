@@ -23,6 +23,12 @@ stacks:
   glance:
     root: apps/glance
 
+  gotify:
+    root: apps/gotify
+    secrets:
+      sops:
+        - secrets.gotify.enc.env
+
   grafana:
     root: apps/grafana
 
