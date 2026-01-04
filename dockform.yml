@@ -14,6 +14,9 @@ stacks:
       sops:
         - secrets.1password.enc.env
 
+  cadvisor:
+    root: apps/cadvisor
+
   gitea:
     root: apps/gitea
 
@@ -22,7 +25,7 @@ stacks:
 
   grafana:
     root: apps/grafana
-    
+
   netbox:
     root: apps/netbox
     secrets:
