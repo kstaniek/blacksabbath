@@ -1,0 +1,46 @@
+networks:
+  proxy-net:
+    external: true
+  1password-net:
+    external: true
+
+services:
+  op-connect-api:
+    image: 1password/connect-api:latest
+    environment:
+      - OP_LOG_LEVEL=info
+      - OP_HTTP_PORT=8661
+      - OP_SESSION=${OP_SESSION}
+    cap_add: 
+      - NET_BROADCAST
+    volumes:
+      - "onepassword-data:/home/opuser/.op/data"
+    networks:
+      - proxy-net  
+      - 1password-net
+    restart: unless-stopped
+    depends_on:
+      - op-connect-sync
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.onepassword.rule=Host(`1password.home.staniek.name`)
+      - traefik.http.routers.onepassword.entrypoints=websecure
+      - traefik.http.routers.onepassword.tls.certresolver=letsencrypt
+      - traefik.http.routers.onepassword.tls=true
+      - traefik.http.services.onepassword.loadbalancer.server.port=8661
+
+  op-connect-sync:
+    image: 1password/connect-sync:latest
+    environment:
+      - OP_LOG_LEVEL=info
+      - OP_HTTP_PORT=8661
+      - OP_SESSION=${OP_SESSION}
+    cap_add: 
+      - NET_BROADCAST
+    volumes:
+      - "onepassword-data:/home/opuser/.op/data"
+    networks:
+      - 1password-net
+
+volumes:
+  onepassword-data:

@@ -8,11 +8,11 @@ sops:
     key_file: ${SOPS_AGE_KEY_FILE}
 
 stacks:
-  traefik:
-    root: apps/traefik
+  1password-connect:
+    root: apps/1password-connect
     secrets:
       sops:
-        - secrets.traefik.enc.env
+        - secrets.1password.enc.env
 
   glance:
     root: apps/glance
@@ -23,7 +23,14 @@ stacks:
       sops:
         - secrets.netbox.enc.env
 
+  traefik:
+    root: apps/traefik
+    secrets:
+      sops:
+        - secrets.traefik.enc.env
+
 networks:
+  1password-net:
   netbox-net:
   proxy-net:
 
