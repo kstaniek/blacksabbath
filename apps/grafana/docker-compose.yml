@@ -9,7 +9,8 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     volumes:
-      - /opt/docker-data/grafana/data:/var/lib/grafana
+      - grafana_data:/var/lib/grafana
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
     restart: unless-stopped
     environment:
       - GF_SERVER_DOMAIN=grafana.home.staniek.name
