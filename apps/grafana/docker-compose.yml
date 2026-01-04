@@ -1,0 +1,34 @@
+networks:
+  monitoring-net:
+    external: true
+  proxy-net:
+    external: true
+
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+    restart: unless-stopped
+    environment:
+      - GF_SERVER_DOMAIN=grafana.home.staniek.name
+      - GF_SERVER_ROOT_URL=https://grafana.home.staniek.name
+      - GF_SERVER_SERVE_FROM_SUB_PATH=false
+    networks:
+      - monitoring-net
+      - proxy-net
+    labels:
+      glance.name: Monitoring
+      glance.icon: si:grafana
+      glance.url: https://grafana.home.staniek.name
+      glance.description: Monitoring Stack
+      glance.id: monitoring
+      traefik.enable: true
+      traefik.http.routers.grafana.rule: Host(`grafana.home.staniek.name`)
+      traefik.http.services.grafana.loadbalancer.server.port: 3000
+      traefik.http.routers.grafana.entrypoints: websecure
+      traefik.http.routers.grafana.tls.certresolver: letsencrypt
+
+volumes:
+  grafana_data:
