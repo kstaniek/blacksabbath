@@ -1,0 +1,31 @@
+networks:
+  proxy-net:
+    external: true
+  monitoring-net:
+    external: true
+
+services:
+  gotify:
+    container_name: gotify
+    hostname: gotify
+    image: ghcr.io/gotify/server
+    volumes:
+      - /opt/docker-data/gotify:/app/data
+    restart: unless-stopped
+    networks:
+      - monitoring-net
+      - proxy-net
+    environment:
+      - GOTIFY_DEFAULTUSER_PASS=${GOTIFY_DEFAULTUSER_PASS}
+    labels:
+      glance.name: Gotify
+      glance.icon: sh:gotify
+      glance.description: Notifications
+      glance.url: https://gotify.home.staniek.name
+      glance.parent: monitoring
+      traefik.enable: true
+      traefik.http.routers.gotify.rule: Host(`gotify.home.staniek.name`)
+      traefik.http.services.gotify.loadbalancer.server.port: 80
+      traefik.http.routers.gotify.entrypoints: websecure
+      traefik.http.routers.gotify.tls.certresolver: letsencrypt
+
