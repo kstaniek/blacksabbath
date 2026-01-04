@@ -10,6 +10,7 @@ services:
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker:/var/lib/docker:ro
+      - /var/dev/disk:/dev/disk:ro
     restart: unless-stopped
     expose:
       - 8080
