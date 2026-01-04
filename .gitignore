@@ -1,0 +1,37 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+# Exclure les fichiers secrets*.env
+secrets*.env
+
+# Mais inclure les fichiers secrets*.enc.env (le ! inverse l'exclusion)
+!secrets*.enc.env
+
+
+# Docker volumes and data
+data/
+volumes/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+#SOPS
+*sops_age_key.txt

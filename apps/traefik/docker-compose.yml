@@ -1,0 +1,86 @@
+# docker-compose.yml
+services:
+  traefik:
+    image: traefik:v3.6
+    container_name: traefik
+    security_opt:
+      - no-new-privileges:true
+    configs:
+      - source: traefik-config
+        target: /traefik.yml
+    labels:
+      traefik.enable: true
+      traefik.http.routers.dashboard.rule: Host(`traefik.home.staniek.name`)
+      traefik.http.routers.dashboard.service: api@internal
+      traefik.http.routers.dashboard.entrypoints: websecure
+      traefik.http.routers.dashboard.tls.certresolver: letsencrypt
+    environment:
+      - CLOUDFLARE_DNS_API_TOKEN=${CLOUDFLARE_DNS_API_TOKEN}
+    networks:
+      - proxy-net
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/docker-data/traefik/letsencrypt:/letsencrypt
+      - /opt/docker-data/traefik/config:/config:ro
+
+networks:
+  proxy-net:
+    external: true
+
+configs:
+  traefik-config:
+    content: |
+      api:
+        dashboard: true
+        insecure: false
+
+      entryPoints:
+        web:
+          address: ":80"
+          http:
+            redirections:
+              entryPoint:
+                to: websecure
+                scheme: https
+                permanent: true
+
+        websecure:
+          address: ":443"
+          http:
+            tls:
+              certResolver: letsencrypt
+              domains:
+                - main: "*.home.staniek.name"
+                - main: "localhost"
+                  # sans:
+                  #   - "*.home.staniek.name"
+
+      providers:
+        docker:
+          endpoint: "unix:///var/run/docker.sock"
+          exposedByDefault: false
+          network: proxy-net
+        file:
+          directory: /config
+          watch: true
+
+      certificatesResolvers:
+        letsencrypt:
+          acme:
+            email: ${ACME_EMAIL}
+            storage: /letsencrypt/acme.json
+            caServer: https://acme-staging-v02.api.letsencrypt.org/directory # staging
+            dnsChallenge:
+              provider: cloudflare
+              delayBeforeCheck: "5s"
+              resolvers:
+                - "1.1.1.1:53"
+
+      log:
+        level: DEBUG
+
+      accessLog: {}

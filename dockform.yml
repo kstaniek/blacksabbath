@@ -1,0 +1,21 @@
+
+docker:
+  context: default
+  identifier: apps
+
+sops:
+  age:
+    key_file: ${SOPS_AGE_KEY_FILE}
+
+stacks:
+  traefik:
+    root: apps/traefik
+    secrets:
+      sops:
+        - secrets.traefik.enc.env
+
+networks:
+  proxy-net:
+
+
+filesets: {}

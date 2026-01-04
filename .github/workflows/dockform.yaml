@@ -1,0 +1,17 @@
+name: Dockform - Deploys Containers stacks
+on: [push, workflow_dispatch]
+jobs:
+  run-dockform:
+    runs-on: self-hosted
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v5
+
+      # - name: Download dockform
+      #   run: curl --output /tmp/dockform.tar.gz --location https://github.com/gcstr/dockform/releases/download/v0.6.1/dockform_v0.6.1_linux_amd64.tar.gz
+
+      # - name: Extract dockform binary
+      #   run: tar xvzf /tmp/dockform.tar.gz -C /tmp/
+
+      - name: Run dockform
+        run:  export SOPS_AGE_KEY_FILE=${{ secrets.SOPS_AGE_KEY_FILE }} && /usr/local/bin/dockform --config ./dockform.yml apply --skip-confirmation

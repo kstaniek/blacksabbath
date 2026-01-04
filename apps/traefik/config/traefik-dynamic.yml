@@ -1,0 +1,65 @@
+http:
+  routers:
+    # redirect-http:
+    #   entryPoints: [http]
+    #   rule: HostRegexp(`{any:.+}`)
+    #   middlewares: [redirect-to-https]
+    #   service: noop@internal
+
+    # forward-http:
+    #   rule: Host(`ampio.home.staniek.name`)
+    #   entryPoints:
+    #     - http
+    #   middlewares:
+    #     - redirect-to-https
+    #   service: noop@internal
+  
+    ampio-https:
+      rule: Host(`ampio.home.staniek.name`)
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - addHost-ampio
+      service: ampio-svc
+    
+    satel-https:
+      rule: Host(`satel.home.staniek.name`)
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - addHost-satel
+      service: satel-svc
+    
+  middlewares:  
+    addHost-ampio:
+      headers:
+        customRequestHeaders:
+          Host: ampio01.home.staniek.name
+    addHost-satel:
+      headers:
+        customRequestHeaders:
+          Host: satel01.home.staniek.name
+  
+  services:
+    ampio-svc:
+      loadBalancer:
+        servers:
+          - url: http://ampio01.home.staniek.name
+
+    satel-svc:
+      loadBalancer:
+        servers:
+          - url: http://satel01.home.staniek.name
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+    network: proxy-net
+  file:
+    directory: /config
+    watch: true
