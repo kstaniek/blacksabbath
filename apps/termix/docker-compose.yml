@@ -1,0 +1,32 @@
+networks:
+  proxy-net:
+    external: true
+
+services:
+  termix:
+    image: ghcr.io/lukegus/termix:latest
+    container_name: termix
+    restart: unless-stopped
+    # ports:
+    #   - "8080:8080"
+    volumes:
+      - termix-data:/app/data
+    environment:
+      PORT: "8080"
+    networks:
+      - proxy-net
+    labels:
+      traefik.enable: true
+      traefik.http.routers.termix.rule: Host(`termix.home.staniek.name`)
+      traefik.http.routers.termix.entrypoints: websecure
+      traefik.http.routers.termix.tls.certresolver: letsencrypt
+      traefik.http.routers.termix.tls: true
+      traefik.http.services.termix.loadbalancer.server.port: 8080    
+      glance.name: Termix
+      glance.icon: sh:termix
+      glance.description: Terminal in your browser
+      glance.url: https://termix.home.staniek.name
+
+volumes:
+  termix-data:
+    
