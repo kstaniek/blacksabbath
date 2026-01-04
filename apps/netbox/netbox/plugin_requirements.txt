@@ -1,0 +1,5 @@
+# netbox-topology-views
+netbox-plugin-dns==1.4.5
+# slurpit_netbox==1.1.44
+netboxlabs-diode-netbox-plugin==1.6.0
+netboxlabs-netbox-branching==0.8.0

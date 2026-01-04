@@ -17,8 +17,14 @@ stacks:
   glance:
     root: apps/glance
 
+  netbox:
+    root: apps/netbox
+    secrets:
+      sops:
+        - secrets.netbox.enc.env
 
 networks:
+  netbox-net:
   proxy-net:
 
 

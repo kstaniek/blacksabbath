@@ -1,0 +1,11 @@
+# Pin this once you're happy (example tag shown; choose the NetBox version you run)
+FROM netboxcommunity/netbox:v4.4.8
+
+COPY netbox/plugin_requirements.txt /opt/netbox/plugin_requirements.txt
+RUN /usr/local/bin/uv pip install -r /opt/netbox/plugin_requirements.txt
+
+# Load plugin enablement/config
+# COPY netbox/plugins.py /etc/netbox/config/plugins.py
+
+# Copy any additional plugin configuration here
+COPY netbox/extra.py /etc/netbox/config/extra.py
