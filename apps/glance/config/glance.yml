@@ -33,9 +33,9 @@ pages:
                   - title: Home Assistant (Old Instance)
                     url: https://hass.home.staniek.name
                   - title: Ampio Server
-                    url: http://ampio.home.staniek.name
+                    url: https://ampio.home.staniek.name
                   - title: Satel
-                    url: http://satel.home.staniek.name
+                    url: https://satel.home.staniek.name
                   
       - size: full
         widgets:
