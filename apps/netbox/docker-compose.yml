@@ -110,6 +110,11 @@ services:
       glance.name: Postgres
       glance.parent: netbox
 
+  volsync:
+    image: jtreminio/volsync
+    volumes:
+      - database-data:/opt/backups/netbox/database
+
   netbox:
     build:
       context: .
