@@ -22,7 +22,7 @@ services:
       glance.name: Prometheus
       traefik.enable: true
       traefik.http.routers.prometheus.rule: Host(`prometheus.home.staniek.name`)
-      traefik.http.services.prometheus.loadbalancer.server.port: 80
+      traefik.http.services.prometheus.loadbalancer.server.port: 9090
       traefik.http.routers.prometheus.entrypoints: websecure
       traefik.http.routers.prometheus.tls.certresolver: letsencrypt
 
