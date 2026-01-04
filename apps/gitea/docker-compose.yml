@@ -22,7 +22,7 @@ services:
       retries: 5
       start_period: 30s
     volumes:
-      - /opt/docker-data/gitea/data:/data
+      - gitea-data:/data
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     labels:
@@ -38,9 +38,11 @@ services:
 
   volsync:
     image: jtreminio/volsync
-    # environment:
-    #   - PRESYNC=1
+    environment:
+      - PRESYNC=1
     volumes:
-      - /opt/docker-data/gitea/data:/vol/container/gitea-data
+      - gitea-data:/vol/container/gitea-data
       - /opt/backup/gitea/data:/vol/host/gitea-data
-  
+
+volumes:
+  gitea-data:
