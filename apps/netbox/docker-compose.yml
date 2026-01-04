@@ -116,6 +116,15 @@ services:
       - database-data:/vol/container/netbox-database
       - /opt/backup/netbox/database:/vol/host/netbox-database
 
+      - netbox-media:/vol/container/netbox-media
+      - /opt/backup/netbox/media:/vol/host/netbox-media
+
+      - netbox-reports:/vol/container/netbox-reports
+      - /opt/backup/netbox/reports:/vol/host/netbox-reports
+
+      - netbox-scripts:/vol/container/netbox-scripts
+      - /opt/backup/netbox/scripts:/vol/host/netbox-scripts
+
   netbox:
     build:
       context: .
