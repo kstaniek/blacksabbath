@@ -113,7 +113,8 @@ services:
   volsync:
     image: jtreminio/volsync
     volumes:
-      - database-data:/opt/backups/netbox/database
+      - database-data:/vol/container/netbox-database
+      - /opt/backup/netbox/database:/vol/host/netbox-database
 
   netbox:
     build:
