@@ -1,0 +1,127 @@
+server:
+  proxied: true
+
+pages:
+  - name: Home
+    # Optionally, if you only have a single page you can hide the desktop navigation for a cleaner look
+    # hide-desktop-navigation: true
+    columns:
+      - size: small
+        widgets:
+          - type: server-stats
+            servers:
+              - type: local
+                name: Services
+          - type: bookmarks
+            groups:
+              - title: Networking
+                color: 10 70 50
+                links:
+                  - title: ESXi 01
+                    url: https://esxi01.home.staniek.name
+                  - title: ESXi 02
+                    url: https://esxi02.home.staniek.name
+                  - title: ESXi 03
+                    url: https://esxi03.home.staniek.name
+                  - title: EWC
+                    url: https://ewc.home.staniek.name
+              - title: Automation
+                color: 210 70 50
+                links:
+                  - title: Home Assistant
+                    url: https://ha.home.staniek.name
+                  - title: Home Assistant (Old Instance)
+                    url: https://hass.home.staniek.name
+                  - title: Ampio Server
+                    url: http://ampio.home.staniek.name
+                  - title: Satel
+                    url: http://satel.home.staniek.name
+                  
+      - size: full
+        widgets:
+          - type: docker-containers
+            hide-by-default: false
+          
+          - type: group
+            widgets:
+              - type: reddit
+                subreddit: Qubic
+                show-thumbnails: true
+              - type: reddit
+                subreddit: technology
+                show-thumbnails: true
+              - type: reddit
+                subreddit: selfhosted
+                show-thumbnails: true
+              - type: reddit
+                subreddit: homelab
+                show-thumbnails: true
+              - type: reddit
+                subreddit: linux
+                show-thumbnails: true
+              - type: reddit
+                subreddit: sysadmin
+                show-thumbnails: true
+              - type: reddit
+                subreddit: devops
+                show-thumbnails: true
+              - type: reddit
+                subreddit: networking
+                show-thumbnails: true
+              - type: reddit
+                show-thumbnails: true
+                subreddit: pcgaming
+              - type: reddit
+                subreddit: games
+              - type: reddit
+                subreddit: gamingnews
+            
+          - type: videos
+            style: grid-cards
+            collapse-after-rows: 3
+            channels:
+              - UCsb3Mp9uuq2L6h-I_nO1oJA # Krzystof Skiba
+              - UCk1qY09hkqTworXLBKd5M-w # This is IT
+              - UCXuqSBlHAE6Xw-yeJA0Tunw # Linus Tech Tips
+              - UCdBK94H6oZT2Q7l0-b0xmMg # Short Cirtcuit
+              - UCeeFfhMcJa1kjtfZAGskOCA # Tech  Linked
+              - UCe1Aj6VEO299Yq4WkXdoD3Q # Alexander CHappel
+              - UCZXW8E1__d5tZb-wLFOt8TQ # Bog
+              - UCEZY7Tu2VOI18JVLMWMVbMA # Gamersden
+              - UC2ruguOcwnVR2_4DtiGnmLg # TheGreatReview
+              - UCNvzD7Z-g64bPXxGzaQaa4g # gameranx
+              - UCZ7AeeVbyslLM_8-nVy2B8Q # Skill Up
+              - UCHDxYLv8iovIbhrfl16CNyg # GameLinked
+              - UC9PBzalIcEQCsiIkq36PyUA # Digital Foundry
+
+          - type: group
+            widgets:
+              - type: hacker-news
+              - type: lobsters
+
+      - size: small
+        widgets:
+          - type: clock
+            hour-format: 24h
+
+          - type: calendar
+            first-day-of-week: monday  
+
+          - type: weather
+            location: Siemianowice Slaskie, Poland
+            units: metric # alternatively "imperial"
+            hour-format: 24h # alternatively "24h"
+          
+          - type: markets
+            markets:
+              - symbol: SPY
+                name: S&P 500
+              - symbol: BTC-USD
+                name: Bitcoin
+              - symbol: CSCO
+                name: Cisco
+              - symbol: AAPL
+                name: Apple
+              - symbol: MSFT
+                name: Microsoft
+  

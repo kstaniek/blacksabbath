@@ -1,0 +1,35 @@
+networks:
+  proxy-net:
+    external: true
+
+services:
+  glance:
+    container_name: glance
+    image: glanceapp/glance
+    restart: unless-stopped
+    volumes:
+      - ./config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock
+    # ports:
+    #   - 8080:8080
+    networks:
+      - proxy-net
+    # environment:
+    #   - GITHUB_TOKEN=${GITHUB_TOKEN}
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.glance.rule=Host(`glance.iot.jusma.fr`)"
+    #   - "traefik.http.routers.glance.entrypoints=websecure"
+    #   - "traefik.http.routers.glance.tls=true"
+    #   - "traefik.http.routers.glance.tls.certresolver=letsencrypt"
+    #   - "traefik.http.services.glance.loadbalancer.server.port=8080"
+    labels:
+      glance.name: Glance
+      glance.icon: sh:glance
+      glance.description: Dashboard
+      glance.url: https://home.staniek.name
+      traefik.enable: true
+      traefik.http.routers.glance.rule: Host(`home.staniek.name`)
+      traefik.http.routers.glance.entrypoints: websecure
+      traefik.http.routers.glance.tls.certresolver: letsencrypt
+      traefik.http.services.glance.loadbalancer.server.port: 8080
