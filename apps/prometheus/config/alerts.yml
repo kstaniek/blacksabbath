@@ -1,0 +1,56 @@
+groups:
+  - name: SystemAlerts
+    rules:
+      - alert: HostDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Host {{ $labels.instance }} unreachable"
+          description: "Prometheus can no longer scrape {{ $labels.instance }} for 1m."
+
+      - alert: HighCPUUsage
+        expr: avg(rate(node_cpu_seconds_total{mode="user"}[1m])) by (instance) > 0.85
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU Usage on {{ $labels.instance }}"
+          description: "CPU load is above 85%."
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes > 0.9
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High Memory Usage on {{ $labels.instance }}"
+          description: "More than 90% of memory is used."
+
+      - alert: DiskFull
+        expr: (node_filesystem_avail_bytes{fstype!="tmpfs",fstype!="overlay"} / node_filesystem_size_bytes{fstype!="tmpfs",fstype!="overlay"}) < 0.10
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Disk Almost Full on {{ $labels.instance }}"
+          description: "Less than 10% disk space available on {{ $labels.mountpoint }}."
+
+      - alert: DiskReadErrors
+        expr: rate(node_disk_errors_total[5m]) > 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Disk Read Errors on {{ $labels.device }}"
+          description: "Disk read errors have been detected."
+
+      - alert: HighCPUTemp
+        expr: node_hwmon_temp_celsius > 75
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU Temperature on {{ $labels.instance }}"
+          description: "CPU temperature exceeds 75°C."

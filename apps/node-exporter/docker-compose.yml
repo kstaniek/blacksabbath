@@ -1,0 +1,25 @@
+networks:
+  monitoring-net:
+    external: true
+    
+services:
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    user: root
+    # network_mode: host
+    pid: "host"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+      - /dev:/dev
+    command:
+      - "--path.rootfs=/rootfs"
+      - "--collector.filesystem.mount-points-exclude=^/mnt/sshfs/ultra($|/)"
+    restart: unless-stopped
+    networks:
+      - monitoring-net
+    labels:
+      glance.parent: monitoring
+      glance.name: Node-Exporter

@@ -1,0 +1,30 @@
+networks:
+  proxy-net:
+    external: true
+  monitoring-net:
+    external: true
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./config/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus_data:/prometheus
+      - /dev:/dev
+    restart: unless-stopped
+    networks:
+      - monitoring-net
+      - proxy-net
+    labels:
+      glance.parent: monitoring
+      glance.name: Prometheus
+      traefik.enable: true
+      traefik.http.routers.prometheus.rule: Host(`prometheus.home.staniek.name`)
+      traefik.http.services.prometheus.loadbalancer.server.port: 80
+      traefik.http.routers.prometheus.entrypoints: websecure
+      traefik.http.routers.prometheus.tls.certresolver: letsencrypt
+
+volumes:
+  prometheus_data:

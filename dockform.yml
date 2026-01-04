@@ -26,6 +26,12 @@ stacks:
       sops:
         - secrets.netbox.enc.env
 
+  node-exporter:
+    root: apps/node-exporter
+
+  prometheus:
+    root: apps/prometheus
+
   traefik:
     root: apps/traefik
     secrets:
