@@ -61,7 +61,6 @@ configs:
               certResolver: letsencrypt
               domains:
                 - main: "*.home.staniek.name"
-                - main: "localhost"
                   # sans:
                   #   - "*.home.staniek.name"
 
@@ -79,7 +78,7 @@ configs:
           acme:
             email: ${ACME_EMAIL}
             storage: /letsencrypt/acme.json
-            caServer: https://acme-staging-v02.api.letsencrypt.org/directory # staging
+            # caServer: https://acme-staging-v02.api.letsencrypt.org/directory # staging
             dnsChallenge:
               provider: cloudflare
               delayBeforeCheck: "5s"
