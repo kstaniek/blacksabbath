@@ -1,0 +1,36 @@
+networks:
+  proxy-net:
+    external: true
+
+services:
+  server:
+    image: docker.gitea.com/gitea:1.25.3
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - GITEA__webhook__ALLOWED_HOST_LIST=*.home.staniek.name
+      - GITEA__log__LEVEL=Warn
+    restart: always
+    networks:
+      - proxy-net
+    healthcheck:
+      test: ["CMD", "curl", "-fSs", "http://localhost:3000/api/healthz" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    volumes:
+      - /opt/docker-data/gitea/data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      traefik.enable: true
+      traefik.http.routers.gitea.rule: Host(`gitea.home.staniek.name`)
+      traefik.http.routers.gitea.entrypoints: websecure
+      traefik.http.routers.gitea.tls.certresolver: letsencrypt
+      traefik.http.services.gitea.loadbalancer.server.port: 3000
+      glance.name: Gitea 
+      glance.icon: sh:gitea
+      glance.description: Git Service
+      glance.url: https://gitea.home.staniek.name
+  
