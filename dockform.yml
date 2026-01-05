@@ -83,6 +83,7 @@ networks:
   auth-net:
   monitoring-net:
   netbox-net:
+  paperless-net:
   proxy-net:
 
 

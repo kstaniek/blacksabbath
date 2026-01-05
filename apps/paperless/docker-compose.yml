@@ -1,6 +1,8 @@
 networks:
   proxy-net:
     external: true
+  paperless-net:
+    external: true
 
 services:
   broker:
@@ -8,6 +10,8 @@ services:
     restart: unless-stopped
     volumes:
       - redis-data:/data
+    networks:
+      - paperless-net
  
   webserver:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
@@ -26,6 +30,7 @@ services:
       PAPERLESS_REDIS: redis://broker:6379
     networks:
       - proxy-net
+      - paperless-net
     labels:
       traefik.enable: true
       traefik.http.routers.paperless.rule: Host(`paperless.home.staniek.name`)
