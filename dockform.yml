@@ -72,6 +72,9 @@ stacks:
   prometheus:
     root: apps/prometheus
 
+  prowlarr:
+    root: apps/prowlarr
+
   qbitrorrent:
     root: apps/qbitrorrent
 
