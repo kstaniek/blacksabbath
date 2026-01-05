@@ -2,31 +2,30 @@ networks:
   proxy-net:
     external: true
 services:
-  readarr:
-    image: linuxserver/readarr:amd64-nightly
-    container_name: readarr
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Europe/Warsaw
     volumes:
-      - readarr-data:/config
-      - /opt/docker-data/readarr/books:/books #optional
-      - /opt/docker-data/readarr/downloads:/downloads #optional
+      - bazarr-data:/config
+      - /opt/docker-data/bazarr/movies:/movies #optional
+      - /opt/docker-data/bazarr/tv:/tv #optional
     restart: unless-stopped
     networks:
       - proxy-net
     labels:
       traefik.enable: true
-      traefik.http.routers.readarr.rule: Host(`readarr.home.staniek.name`)
-      traefik.http.routers.readarr.entrypoints: websecure
-      traefik.http.routers.readarr.tls.certresolver: letsencrypt
-      traefik.http.services.readarr.loadbalancer.server.port: 8787
-      glance.name: Readarr
-      glance.icon: sh:readarr
-      glance.description: Book Collection Manager
-      glance.url: https://readarr.home.staniek.name
-      glance.id: readarr
+      traefik.http.routers.bazarr.rule: Host(`bazarr.home.staniek.name`)
+      traefik.http.routers.bazarr.entrypoints: websecure
+      traefik.http.routers.bazarr.tls.certresolver: letsencrypt
+      traefik.http.services.bazarr.loadbalancer.server.port: 6767
+      glance.name: Bazarr
+      glance.icon: sh:bazarr
+      glance.description: Media Collection Manager
+      glance.url: https://bazarr.home.staniek.name
+      glance.id: bazarr
 
 volumes:
-  readarr-data:
+  bazarr-data:
