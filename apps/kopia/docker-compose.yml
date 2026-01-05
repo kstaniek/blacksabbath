@@ -1,0 +1,47 @@
+networks:
+  proxy-net:
+    external: true
+services:
+  kopia:
+    image: kopia/kopia:latest
+    restart: unless-stopped
+    # ports:
+    #     - 51515:51515
+    # # Setup the server that provides the web gui
+    networks:
+      - proxy-net
+    command:
+        - server
+        - start
+        - --disable-csrf-token-checks
+        - --insecure
+        - --address=0.0.0.0:51515
+        - --server-username=${KOPIA_SERVER_USERNAME}
+        - --server-password=${KOPIA_SERVER_PASSWORD}
+    environment:
+        # Set repository password
+        KOPIA_PASSWORD: "${KOPIA_PASSWORD}"
+        USER: "User"
+    volumes:
+        # Mount local folders needed by kopia
+        - /opt/docker-data/kopia/config:/app/config
+        - /opt/docker-data/kopia/cache:/app/cache
+        - /opt/docker-data/kopia/logs:/app/logs
+        # Mount local folders to snapshot
+        - /opt/docker-data/kopia/data:/data:ro
+        # Mount repository location
+        - /opt/docker-data/kopia/repository:/repository
+        # Mount path for browsing mounted snapshots
+        - /opt/docker-data/kopia/tmp:/tmp:shared
+    labels:
+      glance.name: Kopia
+      glance.icon: sh:kopia
+      glance.description: "Kopia Backup Server"
+      glance.url: https://kopia.home.staniek.name
+      glance.id: kopia
+      traefik.enable: true
+      traefik.http.routers.kopia.rule: Host(`kopia.home.staniek.name`)
+      traefik.http.services.kopia.loadbalancer.server.port: 51515
+      traefik.http.routers.kopia.entrypoints: websecure
+      traefik.http.routers.kopia.tls.certresolver: letsencrypt
+    

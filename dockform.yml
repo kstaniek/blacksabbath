@@ -45,6 +45,12 @@ stacks:
   grafana:
     root: apps/grafana
 
+  kopia:
+    root: apps/kopia
+    secrets:
+      sops:
+        - secrets.kopia.enc.env
+
   netbox:
     root: apps/netbox
     secrets:
