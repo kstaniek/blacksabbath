@@ -1,0 +1,37 @@
+networks:
+  proxy-net:
+    external: true
+
+services:
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Warsaw
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=6881
+    volumes:
+      - qbittorrent-data:/config
+      - /opt/docker-data/qbittorrent/downloads:/downloads #optional
+    # ports:
+      # - 8080:8080
+      # - 6881:6881
+      # - 6881:6881/udp
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    labels:
+      traefik.enable: true
+      traefik.http.routers.qbittorrent.rule: Host(`qbittorrent.home.staniek.name`)
+      traefik.http.routers.qbittorrent.entrypoints: websecure
+      traefik.http.routers.qbittorrent.tls.certresolver: letsencrypt
+      traefik.http.services.qbittorrent.loadbalancer.server.port: 8080
+      glance.name: qBittorrent
+      glance.icon: sh:qbittorrent
+      glance.description: Torrent Client
+      glance.url: https://qbittorrent.home.staniek.name
+      glance.id: qbittorrent
+
+volumes:
+  qbittorrent-data:

@@ -72,6 +72,9 @@ stacks:
   prometheus:
     root: apps/prometheus
 
+  qbitrorrent:
+    root: apps/qbitrorrent
+
   radarr:
     root: apps/radarr
 
