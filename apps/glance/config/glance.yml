@@ -120,6 +120,9 @@ pages:
                 name: Bitcoin
               - symbol: CSCO
                 name: Cisco
+              - symbol: QUBICUSD
+                name: Qubic
+                chart-link: https://www.tradingview.com/chart/?symbol=QUBICUSD
               - symbol: AAPL
                 name: Apple
               - symbol: MSFT
