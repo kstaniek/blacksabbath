@@ -29,7 +29,7 @@ services:
         - /opt/docker-data/kopia/logs:/app/logs
         # Mount local folders to snapshot
         # This is the folder with volsync backups
-        - /opt/backups:/data:ro
+        - /opt/backup:/data:ro
         # Mount repository location
         - /opt/docker-data/kopia/repository:/repository
         # Mount path for browsing mounted snapshots
