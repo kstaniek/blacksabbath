@@ -60,6 +60,12 @@ stacks:
   node-exporter:
     root: apps/node-exporter
 
+  paperless:
+    root: apps/paperless
+    secrets:
+      sops:
+        - secrets.paperless.enc.env
+
   prometheus:
     root: apps/prometheus
 

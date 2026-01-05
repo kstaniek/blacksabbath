@@ -1,0 +1,46 @@
+networks:
+  proxy-net:
+    external: true
+
+services:
+  broker:
+    image: docker.io/library/redis:7
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+ 
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    restart: unless-stopped
+    depends_on:
+      - broker
+    ports:
+      - "8000:8000"
+    volumes:
+      - paperless-data:/usr/src/paperless/data
+      - paperless-media:/usr/src/paperless/media
+      - paperless-export:/usr/src/paperless/export
+      - paperless-consume:/usr/src/paperless/consume
+    env_file: docker-compose.env
+    environment:
+      PAPERLESS_REDIS: redis://broker:6379
+    networks:
+      - proxy-net
+    labels:
+      traefik.enable: true
+      traefik.http.routers.paperless.rule: Host(`paperless.home.staniek.name`)
+      traefik.http.services.paperless.loadbalancer.server.port: 8000
+      traefik.http.routers.paperless.entrypoints: websecure
+      traefik.http.routers.paperless.tls.certresolver: letsencrypt
+      glance.name: Paperless NGX
+      glance.icon: sh:paperless
+      glance.description: Document Management System
+      glance.url: https://paperless.home.staniek.name
+      glance.id: paperless
+
+volumes:
+  redis-data:
+  paperless-data:
+  paperless-media:
+  paperless-export:
+  paperless-consume:
