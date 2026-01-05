@@ -21,7 +21,7 @@ services:
       - paperless-media:/usr/src/paperless/media
       - paperless-export:/usr/src/paperless/export
       - paperless-consume:/usr/src/paperless/consume
-    env_file: docker-compose.env
+    env_file: paperless.env
     environment:
       PAPERLESS_REDIS: redis://broker:6379
     networks:
