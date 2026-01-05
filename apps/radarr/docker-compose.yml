@@ -1,0 +1,33 @@
+networks:
+  proxy-net:
+    external: true
+services:
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Warsaw
+    volumes:
+      - radarr-data:/config
+      - /opt/docker-data/radarr/movies:/movies #optional
+      - /opt/docker-data/radarr/downloads:/downloads #optional
+    # ports:
+    #   - 7878:7878
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    labels:
+      traefik.enable: true
+      traefik.http.routers.radarr.rule: Host(`radarr.home.staniek.name`)
+      traefik.http.routers.radarr.entrypoints: websecure
+      traefik.http.routers.radarr.tls.certresolver: letsencrypt
+      traefik.http.services.radarr.loadbalancer.server.port: 7878
+      glance.name: Radarr
+      glance.icon: sh:radarr
+      glance.description: Movie Collection Manager
+      glance.url: https://radarr.home.staniek.name
+      glance.id: radarr
+
+volumes:
+  radarr-data:

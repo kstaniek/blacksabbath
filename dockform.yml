@@ -72,6 +72,12 @@ stacks:
   prometheus:
     root: apps/prometheus
 
+  radarr:
+    root: apps/radarr
+
+  sonarr:
+    root: apps/sonarr
+
   termix:
     root: apps/termix
 
