@@ -69,6 +69,9 @@ stacks:
   prometheus:
     root: apps/prometheus
 
+  readdar:
+    root: apps/readdar
+
   termix:
     root: apps/termix
 

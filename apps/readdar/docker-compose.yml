@@ -1,0 +1,32 @@
+networks:
+  proxy-net:
+    external: true
+services:
+  readarr:
+    image: lscr.io/linuxserver/readarr:develop
+    container_name: readarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - readarr-data:/config
+      - /opt/docker-data/readarr/books:/books #optional
+      - /opt/docker-data/readarr/downloads:/downloads #optional
+    restart: unless-stopped
+    networks:
+      - proxy-net
+    labels:
+      traefik.enable: true
+      traefik.http.routers.readarr.rule: Host(`readarr.home.staniek.name`)
+      traefik.http.routers.readarr.entrypoints: websecure
+      traefik.http.routers.readarr.tls.certresolver: letsencrypt
+      traefik.http.services.readarr.loadbalancer.server.port: 8787
+      glance.name: Readarr
+      glance.icon: sh:readarr
+      glance.description: Book Collection Manager
+      glance.url: https://readarr.home.staniek.name
+      glance.id: readarr
+
+volumes:
+  readarr-data:
