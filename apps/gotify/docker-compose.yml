@@ -36,6 +36,9 @@ services:
     volumes:
       - gotify-data:/vol/container/gotify-data
       - /opt/backup/gotify/data:/vol/host/gotify-data
+    labels:
+      glance.parent: monitoring
+      glance.name: Gotify Backup
 
 
 volumes:

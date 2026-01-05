@@ -126,6 +126,9 @@ services:
 
       - netbox-scripts:/vol/container/netbox-scripts
       - /opt/backup/netbox/scripts:/vol/host/netbox-scripts
+    labels:
+      glance.parent: netbox
+      glance.name: NetBox Backup
 
   netbox:
     build:

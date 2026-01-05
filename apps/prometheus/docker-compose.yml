@@ -33,6 +33,9 @@ services:
     volumes:
       - prometheus_data:/vol/container/prometheus-data
       - /opt/backup/prometheus/data:/vol/host/prometheus-data
+    labels:
+      glance.parent: monitoring
+      glance.name: Prometheus Backup
 
 
 volumes:

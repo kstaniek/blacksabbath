@@ -22,7 +22,21 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
-    - pg_database:/var/lib/postgresql/data
+      - pg_database:/var/lib/postgresql/data
+    labels:
+      glance.name: Authentik Database
+      glance.parent: authentik
+
+  volsync:
+    image: jtreminio/volsync
+    # environment:
+    #   - PRESYNC=1
+    volumes:
+      - pg_database:/vol/container/authentik-database
+      - /opt/backup/authentik/database:/vol/host/authentik-database
+    labels:
+      glance.parent: authentik
+      glance.name: Authentik Backup
 
   authentik-server:
     command: server
@@ -54,6 +68,11 @@ services:
       traefik.http.services.authentik.loadbalancer.server.port: 9000
       traefik.http.routers.authentik.entrypoints: websecure
       traefik.http.routers.authentik.tls.certresolver: letsencrypt
+      glance.name: Authentik
+      glance.icon: sh:authentik
+      glance.description: Identity Provider
+      glance.url: https://authentik.home.staniek.name
+      glance.id: authentik
 
   authentik-worker:
     command: worker
@@ -75,22 +94,29 @@ services:
     - /opt/docker-data/authentik/media:/media
     - /opt/docker-data/authentik/certs:/certs
     - /opt/docker-data/authentik/custom-templates:/templates
+    labels:
+      glance.name: Authentik Worker
+      glance.parent: authentik
 
   authentik-ldap:
-        image: ${AUTHENTIK_OUTPUT_LDAP_IMAGE:-ghcr.io/goauthentik/ldap}:${AUTHENTIK_TAG:-2025.10.1}
-        # Optionally specify the container's network, which must be able to reach the core authentik server.
-        # networks:
-        #   - foo
-        # ports:
-        #     - 389:3389
-        #     - 636:6636
-        networks:
-          - auth-net
-        environment:
-          - AUTHENTIK_TOKEN=${AUTHENTIK_TOKEN_LDAP}
-        env_file:
-            - ldap.env
-        restart: unless-stopped
+    image: ${AUTHENTIK_OUTPUT_LDAP_IMAGE:-ghcr.io/goauthentik/ldap}:${AUTHENTIK_TAG:-2025.10.1}
+    # Optionally specify the container's network, which must be able to reach the core authentik server.
+    # networks:
+    #   - foo
+    # ports:
+    #     - 389:3389
+    #     - 636:6636
+    networks:
+      - auth-net
+    environment:
+      - AUTHENTIK_TOKEN=${AUTHENTIK_TOKEN_LDAP}
+    env_file:
+        - ldap.env
+    restart: unless-stopped
+    labels:
+      glance.name: Authentik LDAP
+      glance.parent: authentik
+
 
 volumes:
   pg_database:

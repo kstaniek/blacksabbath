@@ -35,6 +35,7 @@ services:
       glance.icon: sh:gitea
       glance.description: Git Service
       glance.url: https://gitea.home.staniek.name
+      glance:id: gitea
 
   volsync:
     image: jtreminio/volsync
@@ -43,6 +44,9 @@ services:
     volumes:
       - gitea-data:/vol/container/gitea-data
       - /opt/backup/gitea/data:/vol/host/gitea-data
+    labels:
+      glance.parent: gitea
+      glance.name: Gitea Backup
 
 volumes:
   gitea-data:
