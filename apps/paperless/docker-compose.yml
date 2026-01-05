@@ -46,6 +46,26 @@ services:
       glance.url: https://paperless.home.staniek.name
       glance.id: paperless
 
+  volsync:
+    image: jtreminio/volsync
+    # environment:
+    #   - PRESYNC=1
+    volumes:
+      - paperless-data:/vol/container/paperless-data
+      - /opt/backup/paperless/data:/vol/host/paperless-data
+
+      - paperless-media:/vol/container/paperless-media
+      - /opt/backup/paperless/media:/vol/host/paperless-media
+
+      - paperless-export:/vol/container/paperless-export
+      - /opt/backup/paperless/export:/vol/host/paperless-export
+
+      - paperless-consume:/vol/container/paperless-consume
+      - /opt/backup/paperless/consume:/vol/host/paperless-consume
+    labels:
+      glance.parent: paperless
+      glance.name: Paperless Backup
+
 volumes:
   redis-data:
   paperless-data:
