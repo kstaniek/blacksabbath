@@ -114,17 +114,17 @@ pages:
           
           - type: markets
             markets:
-              - symbol: SPY
-                name: S&P 500
+              - symbol: QUBIC-USD
+                name: Qubic
+                chart-link: https://www.tradingview.com/chart/?symbol=QUBICUSD
               - symbol: BTC-USD
                 name: Bitcoin
               - symbol: CSCO
                 name: Cisco
-              - symbol: QUBICUSD
-                name: Qubic
-                chart-link: https://www.tradingview.com/chart/?symbol=QUBICUSD
               - symbol: AAPL
                 name: Apple
               - symbol: MSFT
                 name: Microsoft
-  
+              - symbol: SPY
+                name: S&P 500
+              
