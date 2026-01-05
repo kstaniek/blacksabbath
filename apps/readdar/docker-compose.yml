@@ -3,12 +3,12 @@ networks:
     external: true
 services:
   readarr:
-    image: lscr.io/linuxserver/readarr:develop
+    image: linuxserver/readarr:amd64-nightly
     container_name: readarr
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=Europe/London
+      - TZ=Europe/Warsaw
     volumes:
       - readarr-data:/config
       - /opt/docker-data/readarr/books:/books #optional
