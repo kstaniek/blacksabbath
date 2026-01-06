@@ -87,6 +87,12 @@ stacks:
       sops:
         - secrets.portall.enc.env
 
+  postgres:
+    root: apps/postgres
+    secrets:
+      sops:
+        - secrets.postgres.enc.env
+
   prometheus:
     root: apps/prometheus
 
