@@ -38,7 +38,7 @@ services:
       - DOCKER_HOST=tcp://socket-proxy:2375
       - DOCKER_ENABLED=true
     volumes:
-      - portall-data:/app/instance
+      - ./instance:/app/instance
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -74,8 +74,8 @@ services:
       - ALLOW_STOP=0
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    ports:
-      - "127.0.0.1:2375:2375"
+    # ports:
+    #   - "127.0.0.1:2375:2375"
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
@@ -95,5 +95,5 @@ services:
       glance.name: Portall Socket Proxy
       glance.parent: portall
 
-volumes:
-  portall-data:
+# volumes:
+#   portall-data:
