@@ -56,79 +56,79 @@ services:
       glance.name: Redis Cache
       glance.parent: netbox
     
-  database:
-    image: docker.io/postgres:16-alpine
-    pull_policy: always
-    env_file: database.env
-    environment:
-      - |
-        POSTGRES_INIT_SCRIPT=#!/bin/bash
+  # database:
+  #   image: docker.io/postgres:16-alpine
+  #   pull_policy: always
+  #   env_file: database.env
+  #   environment:
+  #     - |
+  #       POSTGRES_INIT_SCRIPT=#!/bin/bash
 
-        set -euo pipefail
+  #       set -euo pipefail
 
-        # Create databases and users with privileges for each service
+  #       # Create databases and users with privileges for each service
 
-        psql -v ON_ERROR_STOP=1 --username "$$POSTGRES_USER" --dbname "$$POSTGRES_DB" <<-EOSQL
-            -- Netbox
-            CREATE USER $${NETBOX_POSTGRES_USER} WITH PASSWORD '$${NETBOX_POSTGRES_PASSWORD}';
-            CREATE DATABASE $${NETBOX_POSTGRES_DB_NAME} OWNER $${NETBOX_POSTGRES_USER};
-            GRANT ALL PRIVILEGES ON DATABASE $${NETBOX_POSTGRES_DB_NAME} TO $${NETBOX_POSTGRES_USER};
+  #       psql -v ON_ERROR_STOP=1 --username "$$POSTGRES_USER" --dbname "$$POSTGRES_DB" <<-EOSQL
+  #           -- Netbox
+  #           CREATE USER $${NETBOX_POSTGRES_USER} WITH PASSWORD '$${NETBOX_POSTGRES_PASSWORD}';
+  #           CREATE DATABASE $${NETBOX_POSTGRES_DB_NAME} OWNER $${NETBOX_POSTGRES_USER};
+  #           GRANT ALL PRIVILEGES ON DATABASE $${NETBOX_POSTGRES_DB_NAME} TO $${NETBOX_POSTGRES_USER};
 
-            -- Diode
-            CREATE USER $${DIODE_POSTGRES_USER} WITH PASSWORD '$${DIODE_POSTGRES_PASSWORD}';
-            CREATE DATABASE $${DIODE_POSTGRES_DB_NAME} OWNER $${DIODE_POSTGRES_USER};
-            GRANT ALL PRIVILEGES ON DATABASE $${DIODE_POSTGRES_DB_NAME} TO $${DIODE_POSTGRES_USER};
+  #           -- Diode
+  #           CREATE USER $${DIODE_POSTGRES_USER} WITH PASSWORD '$${DIODE_POSTGRES_PASSWORD}';
+  #           CREATE DATABASE $${DIODE_POSTGRES_DB_NAME} OWNER $${DIODE_POSTGRES_USER};
+  #           GRANT ALL PRIVILEGES ON DATABASE $${DIODE_POSTGRES_DB_NAME} TO $${DIODE_POSTGRES_USER};
 
-            -- Hydra
-            CREATE USER $${HYDRA_POSTGRES_USER} WITH PASSWORD '$${HYDRA_POSTGRES_PASSWORD}';
-            CREATE DATABASE $${HYDRA_POSTGRES_DB_NAME} OWNER $${HYDRA_POSTGRES_USER};
-            GRANT ALL PRIVILEGES ON DATABASE $${HYDRA_POSTGRES_DB_NAME} TO $${HYDRA_POSTGRES_USER};
-        EOSQL
-    command: |
-      sh -c "
-        echo \"$$POSTGRES_INIT_SCRIPT\" > /docker-entrypoint-initdb.d/01-init-databases.sh && \
-        chmod +x /docker-entrypoint-initdb.d/01-init-databases.sh && \
-        docker-entrypoint.sh postgres
-      "
-    ports: []
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${NETBOX_POSTGRES_USER} -d ${NETBOX_POSTGRES_DB_NAME}"]
-      start_period: 20s
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-    volumes:
-      - database-data:/var/lib/postgresql/data
-      - type: tmpfs
-        target: /docker-entrypoint-initdb.d
-        tmpfs:
-          size: 1048576  # 1MB
-    networks:
-      - netbox-net
-    labels:
-      glance.name: Postgres
-      glance.parent: netbox
+  #           -- Hydra
+  #           CREATE USER $${HYDRA_POSTGRES_USER} WITH PASSWORD '$${HYDRA_POSTGRES_PASSWORD}';
+  #           CREATE DATABASE $${HYDRA_POSTGRES_DB_NAME} OWNER $${HYDRA_POSTGRES_USER};
+  #           GRANT ALL PRIVILEGES ON DATABASE $${HYDRA_POSTGRES_DB_NAME} TO $${HYDRA_POSTGRES_USER};
+  #       EOSQL
+  #   command: |
+  #     sh -c "
+  #       echo \"$$POSTGRES_INIT_SCRIPT\" > /docker-entrypoint-initdb.d/01-init-databases.sh && \
+  #       chmod +x /docker-entrypoint-initdb.d/01-init-databases.sh && \
+  #       docker-entrypoint.sh postgres
+  #     "
+  #   ports: []
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U ${NETBOX_POSTGRES_USER} -d ${NETBOX_POSTGRES_DB_NAME}"]
+  #     start_period: 20s
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   restart: unless-stopped
+  #   volumes:
+  #     - database-data:/var/lib/postgresql/data
+  #     - type: tmpfs
+  #       target: /docker-entrypoint-initdb.d
+  #       tmpfs:
+  #         size: 1048576  # 1MB
+  #   networks:
+  #     - netbox-net
+  #   labels:
+  #     glance.name: Postgres
+  #     glance.parent: netbox
 
-  volsync:
-    image: jtreminio/volsync
-    environment:
-      - PRESYNC=1
-    volumes:
-      - database-data:/vol/container/netbox-database
-      - /opt/backup/netbox/database:/vol/host/netbox-database
+  # volsync:
+  #   image: jtreminio/volsync
+  #   environment:
+  #     - PRESYNC=1
+  #   volumes:
+  #     - database-data:/vol/container/netbox-database
+  #     - /opt/backup/netbox/database:/vol/host/netbox-database
 
-      - netbox-media:/vol/container/netbox-media
-      - /opt/backup/netbox/media:/vol/host/netbox-media
+  #     - netbox-media:/vol/container/netbox-media
+  #     - /opt/backup/netbox/media:/vol/host/netbox-media
 
-      - netbox-reports:/vol/container/netbox-reports
-      - /opt/backup/netbox/reports:/vol/host/netbox-reports
+  #     - netbox-reports:/vol/container/netbox-reports
+  #     - /opt/backup/netbox/reports:/vol/host/netbox-reports
 
-      - netbox-scripts:/vol/container/netbox-scripts
-      - /opt/backup/netbox/scripts:/vol/host/netbox-scripts
-    labels:
-      glance.parent: netbox
-      glance.name: NetBox Backup
+  #     - netbox-scripts:/vol/container/netbox-scripts
+  #     - /opt/backup/netbox/scripts:/vol/host/netbox-scripts
+  #   labels:
+  #     glance.parent: netbox
+  #     glance.name: NetBox Backup
 
   netbox:
     build:
@@ -157,6 +157,7 @@ services:
     networks:
       - proxy-net
       - netbox-net
+      - postgres-net
     volumes:
       - netbox-media:/opt/netbox/netbox/media
       - netbox-reports:/opt/netbox/netbox/reports
@@ -185,6 +186,7 @@ services:
         target: /etc/netbox/config/plugins.py
     networks:
       - netbox-net
+      - postgres-net
     command: ["python", "/opt/netbox/netbox/manage.py", "rqworker"]
     restart: unless-stopped
     healthcheck:
@@ -248,6 +250,7 @@ services:
         condition: service_healthy
     networks:
       - netbox-net
+      - postgres-net
     labels:
       glance.name: Diode Reconciler
       glance.parent: netbox
@@ -268,6 +271,7 @@ services:
         condition: service_started
     networks:
       - netbox-net
+      - posgres-net
     labels:
       glance.name: Hydra
       glance.parent: netbox
@@ -283,6 +287,7 @@ services:
         condition: service_healthy
     networks:
       - netbox-net
+      - postgres-net
     labels:
       glance.name: Hydra Migrator
       glance.parent: netbox
@@ -391,7 +396,7 @@ configs:
               'NAME': 'netbox',                                   # Database name
               'USER': 'netbox',                                   # PostgreSQL username
               'PASSWORD': '${NETBOX_POSTGRES_PASSWORD}',          # PostgreSQL password
-              'HOST': 'database',                                 # Database server
+              'HOST': 'postgres',                                 # Database server
               'PORT': '',                                         # Database port (leave blank for default)
               'CONN_MAX_AGE': 300,                                # Max database connection age
           }
