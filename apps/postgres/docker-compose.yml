@@ -66,7 +66,7 @@ services:
         function create_user_and_database() {
           local database=$1
           local user=$2
-          local password=$3
+          local password=x`$3
           if psql -lqt --username "$$POSTGRES_USER" --dbname "$$POSTGRES_DB" | cut -d \| -f 1 | grep -qw $database; then
               echo "Database $database already exists."
           else
@@ -75,36 +75,16 @@ services:
                   CREATE USER $user WITH PASSWORD '$password';
                   CREATE DATABASE $database;
                   GRANT ALL PRIVILEGES ON DATABASE $database TO $user;
-                EOSQL
-            fi
+              EOSQL
+          fi
         }
 
         create_user_and_database "$${PGBACKWEB_POSTGRES_DB_NAME}" "$${PGBACKWEB_POSTGRES_USER}" "$${PGBACKWEB_POSTGRES_PASSWORD}"
         create_user_and_database "$${NETBOX_POSTGRES_DB_NAME}" "$${NETBOX_POSTGRES_USER}" "$${NETBOX_POSTGRES_PASSWORD}"
         create_user_and_database "$${DIODE_POSTGRES_DB_NAME}" "$${DIODE_POSTGRES_USER}" "$${DIODE_POSTGRES_PASSWORD}"
         create_user_and_database "$${HYDRA_POSTGRES_DB_NAME}" "$${HYDRA_POSTGRES_USER}" "$${HYDRA_POSTGRES_PASSWORD}"
-        
-        # psql -v ON_ERROR_STOP=1 --username "$$POSTGRES_USER" --dbname "$$POSTGRES_DB" <<-EOSQL
-        #     -- PGBackWeb
-        #     CREATE USER $${PGBACKWEB_POSTGRES_USER} WITH PASSWORD '$${PGBACKWEB_POSTGRES_PASSWORD}';
-        #     CREATE DATABASE $${PGBACKWEB_POSTGRES_DB_NAME} OWNER $${PGBACKWEB_POSTGRES_USER};
-        #     GRANT ALL PRIVILEGES ON DATABASE $${PGBACKWEB_POSTGRES_DB_NAME} TO $${PGBACKWEB_POSTGRES_USER};
-            
-        #     -- Netbox
-        #     CREATE USER $${NETBOX_POSTGRES_USER} WITH PASSWORD '$${NETBOX_POSTGRES_PASSWORD}';
-        #     CREATE DATABASE $${NETBOX_POSTGRES_DB_NAME} OWNER $${NETBOX_POSTGRES_USER};
-        #     GRANT ALL PRIVILEGES ON DATABASE $${NETBOX_POSTGRES_DB_NAME} TO $${NETBOX_POSTGRES_USER};
+        echo "PostgreSQL initialization script completed."
 
-        #     -- Diode
-        #     CREATE USER $${DIODE_POSTGRES_USER} WITH PASSWORD '$${DIODE_POSTGRES_PASSWORD}';
-        #     CREATE DATABASE $${DIODE_POSTGRES_DB_NAME} OWNER $${DIODE_POSTGRES_USER};
-        #     GRANT ALL PRIVILEGES ON DATABASE $${DIODE_POSTGRES_DB_NAME} TO $${DIODE_POSTGRES_USER};
-
-        #     -- Hydra
-        #     CREATE USER $${HYDRA_POSTGRES_USER} WITH PASSWORD '$${HYDRA_POSTGRES_PASSWORD}';
-        #     CREATE DATABASE $${HYDRA_POSTGRES_DB_NAME} OWNER $${HYDRA_POSTGRES_USER};
-        #     GRANT ALL PRIVILEGES ON DATABASE $${HYDRA_POSTGRES_DB_NAME} TO $${HYDRA_POSTGRES_USER};
-        # EOSQL
     command: |
       sh -c "
         echo \"$$POSTGRES_INIT_SCRIPT\" > /docker-entrypoint-initdb.d/01-init-databases.sh && \
