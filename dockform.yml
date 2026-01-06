@@ -32,7 +32,7 @@ stacks:
 
   dockhand:
     root: apps/dockhand
-    
+
   gitea:
     root: apps/gitea
 
@@ -106,6 +106,7 @@ networks:
   netbox-net:
   paperless-net:
   portall-net:
+  postgres-net:
   proxy-net:
 
 
