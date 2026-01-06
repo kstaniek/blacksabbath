@@ -99,6 +99,7 @@ networks:
   monitoring-net:
   netbox-net:
   paperless-net:
+  portall-net:
   proxy-net:
 
 

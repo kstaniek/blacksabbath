@@ -1,19 +1,58 @@
 networks:
   proxy-net:
     external: true
+  portall-network:
+    driver: bridge
 services:
+  portall-init:
+    image: alpine:latest
+    command: |
+      sh -c "
+        echo 'Setting up instance directory permissions...'
+        mkdir -p /app/instance
+        chmod 777 /app/instance
+        # Try to set ownership to the user that will run the main container
+        chown ${USER_ID:-1000}:${GROUP_ID:-1000} /app/instance 2>/dev/null || echo 'Note: Could not change ownership (this is normal in some environments)'
+        echo 'Instance directory setup complete:'
+        ls -la /app/instance
+        echo 'Permissions setup complete'
+      "
+    volumes:
+      - ./instance:/app/instance
+    user: "0:0"  # Run as root to set permissions
+    restart: "no"  # Only run once
+    labels:
+      glance.name: Portall Init
+      glance.parent: portall
+
   portall:
     image: need4swede/portall:latest
-    container_name: portall
+    user: "${USER_ID:-1000}:${GROUP_ID:-1000}"
+    depends_on:
+      - socket-proxy
+      - portall-init
     # ports:
     #   - "8080:8080"
     environment:
       - SECRET_KEY=${SECRET_KEY}
+      - DOCKER_HOST=tcp://socket-proxy:2375
+      - DOCKER_ENABLED=true
     volumes:
-      - ./instance:/app/instance
-      - /var/run/docker.sock:/var/run/docker.sock
+      - portall-data:/app/instance
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
     networks:
       - proxy-net
+      - portall-network
     labels:
       traefik.enable: true
       traefik.http.routers.portall.rule: Host(`portall.home.staniek.name`)
@@ -25,3 +64,36 @@ services:
       glance.description: Personal Portal
       glance.url: https://portall.home.staniek.name
       glance.id: portall
+
+  # Docker Socket Proxy with automatic GID detection
+  socket-proxy:
+    image: need4swede/socket-proxy:latest
+    environment:
+      - ALLOW_RESTARTS=0
+      - ALLOW_START=0
+      - ALLOW_STOP=0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "127.0.0.1:2375:2375"
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /run/proxy
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    networks:
+      - portall-network
+    labels:
+      glance.name: Portall Socket Proxy
+      glance.parent: portall
+
+volumes:
+  portall-data:
