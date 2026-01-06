@@ -74,7 +74,7 @@ services:
       retries: 5
     restart: unless-stopped
     volumes:
-      - database-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
       - type: tmpfs
         target: /docker-entrypoint-initdb.d
         tmpfs:
@@ -87,3 +87,6 @@ services:
       glance.description: PostgreSQL Database Server
       glance.icon: sh:postgresql
       glance.parent: postgres
+
+volumes:
+  postgres-data:
