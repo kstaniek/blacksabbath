@@ -21,8 +21,8 @@ services:
     restart: unless-stopped
     depends_on:
       - broker
-    ports:
-      - "8000:8000"
+    # ports:
+    #   - "8000:8000"
     volumes:
       - paperless-data:/usr/src/paperless/data
       - paperless-media:/usr/src/paperless/media
