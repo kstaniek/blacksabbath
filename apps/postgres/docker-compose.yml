@@ -109,7 +109,7 @@ services:
         for s in $$services; do
           db_var="$${s}_POSTGRES_DB_NAME"
           user_var="$${s}_POSTGRES_USER"
-          pass_var="${s}_POSTGRES_PASSWORD"
+          pass_var="$${s}_POSTGRES_PASSWORD"
           echo "Preparing database for $$s..."
           create_user_and_database "$${!db_var}" "$${!user_var}" "$${!pass_var}"
         done
