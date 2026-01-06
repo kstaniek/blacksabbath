@@ -1,0 +1,75 @@
+networks:
+  proxy-net:
+    external: true
+  karakeep-net:
+    external: false
+
+services:
+  web:
+    image: ghcr.io/karakeep-app/karakeep:${KARAKEEP_VERSION:-release}
+    restart: unless-stopped
+    volumes:
+      # By default, the data is stored in a docker volume called "data".
+      # If you want to mount a custom directory, change the volume mapping to:
+      # - /path/to/your/directory:/data
+      - karakeep-data:/data
+    # ports:
+    #   - 3000:3000
+    # env_file:
+    #   - .env
+    environment:
+      MEILI_ADDR: http://meilisearch:7700
+      BROWSER_WEB_URL: http://chrome:9222
+      # OPENAI_API_KEY: ...
+
+      # You almost never want to change the value of the DATA_DIR variable.
+      # If you want to mount a custom directory, change the volume mapping above instead.
+      DATA_DIR: /data # DON'T CHANGE THIS
+      NEXTAUTH_URL: http://web:3000
+    networks:
+      - proxy-net
+      - karakeep-net
+    labels:
+      traefik.enable: true
+      traefik.http.routers.karakeep.rule: Host(`karakeep.home.staniek.name`)
+      traefik.http.services.karakeep.loadbalancer.server.port: 3000
+      traefik.http.routers.karakeep.entrypoints: websecure
+      traefik.http.routers.karakeep.tls.certresolver: letsencrypt
+      glance.name: KaraKeep
+      glance.icon: sh:karakeep
+      glance.description: AI-powered knowledge management system
+      glance.url: https://karakeep.home.staniek.name
+      glance.id: karakeep
+  chrome:
+    image: gcr.io/zenika-hub/alpine-chrome:124
+    restart: unless-stopped
+    command:
+      - --no-sandbox
+      - --disable-gpu
+      - --disable-dev-shm-usage
+      - --remote-debugging-address=0.0.0.0
+      - --remote-debugging-port=9222
+      - --hide-scrollbars
+    networks:
+      - karakeep-net
+    labels:
+      glance.parent: karakeep
+      glance.name: KaraKeep Chrome
+  meilisearch:
+    image: getmeili/meilisearch:v1.13.3
+    restart: unless-stopped
+    # env_file:
+    #   - .env
+    environment:
+      MEILI_NO_ANALYTICS: "true"
+    volumes:
+      - karakeep-meilisearch:/meili_data
+    networks:
+      - karakeep-net
+    labels:
+      glance.parent: karakeep
+      glance.name: KaraKeep Meilisearch
+
+volumes:
+  karakeep-meilisearch:
+  karakeep-data:

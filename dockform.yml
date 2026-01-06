@@ -48,6 +48,12 @@ stacks:
   it-tools:
     root: apps/it-tools
 
+  karakeep:
+    root: apps/karakeep
+    secrets:
+      sops:
+        - secrets.karakeep.enc.env
+
   kopia:
     root: apps/kopia
     secrets:
