@@ -18,7 +18,7 @@ services:
         echo 'Permissions setup complete'
       "
     volumes:
-      - ./instance:/app/instance
+      - /opt/docker-data/portall/instance:/app/instance
     user: "0:0"  # Run as root to set permissions
     restart: "no"  # Only run once
     labels:
@@ -38,7 +38,7 @@ services:
       - DOCKER_HOST=tcp://socket-proxy:2375
       - DOCKER_ENABLED=true
     volumes:
-      - ./instance:/app/instance
+      - /opt/docker-data/portall/instance:/app/instance
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
