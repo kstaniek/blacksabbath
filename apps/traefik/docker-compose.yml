@@ -88,6 +88,6 @@ configs:
                 - "1.1.1.1:53"
 
       log:
-        level: DEBUG
+        level: INFO
 
       accessLog: {}
