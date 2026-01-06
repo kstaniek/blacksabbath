@@ -62,9 +62,9 @@ configs:
             tls:
               certResolver: letsencrypt
               domains:
-                - main: "*.home.staniek.name"
-                  # sans:
-                  #   - "*.home.staniek.name"
+                - main: "home.staniek.name"
+                  sans:
+                    - "*.home.staniek.name"
 
       providers:
         docker:
