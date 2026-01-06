@@ -27,9 +27,6 @@ stacks:
         - secrets.authentik.enc.env
         - secrets.postgres.enc.env
 
-  bazarr:
-    root: apps/bazarr
-
   cadvisor:
     root: apps/cadvisor
 
@@ -71,18 +68,6 @@ stacks:
 
   prometheus:
     root: apps/prometheus
-
-  prowlarr:
-    root: apps/prowlarr
-
-  qbitrorrent:
-    root: apps/qbitrorrent
-
-  radarr:
-    root: apps/radarr
-
-  sonarr:
-    root: apps/sonarr
 
   termix:
     root: apps/termix
