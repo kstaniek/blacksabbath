@@ -3,6 +3,8 @@ networks:
     external: true
   netbox-net:
     external: true
+  postgres-net:
+    external: true
 
 volumes:
   database-data:
@@ -144,8 +146,8 @@ services:
       timeout: 3s
       interval: 15s
     depends_on:
-      database:
-        condition: service_healthy
+      # database:
+      #   condition: service_healthy
       redis:
         condition: service_healthy
       redis-cache:
@@ -244,8 +246,8 @@ services:
     depends_on:
       redis:
         condition: service_healthy
-      database:
-        condition: service_healthy
+      # database:
+      #   condition: service_healthy
       netbox:
         condition: service_healthy
     networks:
@@ -265,13 +267,13 @@ services:
     env_file: hydra.env
     restart: on-failure
     depends_on:
-      database:
-        condition: service_healthy
+      # database:
+      #   condition: service_healthy
       hydra-migrate:
         condition: service_started
     networks:
       - netbox-net
-      - posgres-net
+      - postgres-net
     labels:
       glance.name: Hydra
       glance.parent: netbox
@@ -282,9 +284,9 @@ services:
     command: migrate sql up -e --yes
     env_file: hydra.env
     restart: on-failure
-    depends_on:
-      database:
-        condition: service_healthy
+    # depends_on:
+    #   database:
+    #     condition: service_healthy
     networks:
       - netbox-net
       - postgres-net
