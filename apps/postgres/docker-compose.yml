@@ -80,12 +80,9 @@ services:
           # 1) Create role if missing
           psql -v ON_ERROR_STOP=1 --username "$$POSTGRES_USER" --dbname "$$POSTGRES_DB" \
             -v usr="$$user" -v pwd="$$password" <<'EOSQL'
-        DO $$
-        BEGIN
-          IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :'usr') THEN
-            EXECUTE format('CREATE ROLE %I LOGIN PASSWORD %L', :'usr', :'pwd');
-          END IF;
-        END$$;
+        SELECT format('CREATE ROLE %I LOGIN PASSWORD %L', :'usr', :'pwd')
+        WHERE NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :'usr');
+        \gexec
         EOSQL
 
           # 2) Create database if missing (CREATE DATABASE can't run inside a DO/transaction)
