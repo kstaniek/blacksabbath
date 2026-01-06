@@ -11,6 +11,7 @@ services:
     #   - SECRET_KEY=your_secret_key
     volumes:
       - ./instance:/app/instance
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - proxy-net
     labels:
