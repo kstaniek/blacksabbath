@@ -61,22 +61,46 @@ services:
 
         set -euo pipefail
 
-        # Create databases and users with privileges for each service
+        # Creates role + database (if missing) and grants privileges.
+        # Expected to run inside a Postgres container/init context where:
+        #   POSTGRES_USER / POSTGRES_DB are set and psql can connect.
 
-        function create_user_and_database() {
-          local database=$1
-          local user=$2
-          local password=x`$3
-          if psql -lqt --username "$$POSTGRES_USER" --dbname "$$POSTGRES_DB" | cut -d \| -f 1 | grep -qw $database; then
-              echo "Database $database already exists."
-          else
-              echo "  Creating user and database '$database'"
-              psql -v ON_ERROR_STOP=1 --username "$$POSTGRES_USER" --dbname "$$POSTGRES_DB" <<-EOSQL
-                  CREATE USER $user WITH PASSWORD '$password';
-                  CREATE DATABASE $database;
-                  GRANT ALL PRIVILEGES ON DATABASE $database TO $user;
-              EOSQL
+        create_user_and_database() {
+          local database="$1"
+          local user="$2"
+          local password="$3"
+
+          if [[ -z "$database" || -z "$user" || -z "$password" ]]; then
+            echo "ERROR: create_user_and_database requires: <db> <user> <password>" >&2
+            return 1
           fi
+
+          echo "==> Ensuring role '$user' and database '$database' exist"
+
+          # 1) Create role if missing
+          psql -v ON_ERROR_STOP=1 --username "$$POSTGRES_USER" --dbname "$$POSTGRES_DB" \
+            -v usr="$user" -v pwd="$password" <<'EOSQL'
+        DO $$
+        BEGIN
+          IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :'usr') THEN
+            EXECUTE format('CREATE ROLE %I LOGIN PASSWORD %L', :'usr', :'pwd');
+          END IF;
+        END$$;
+        EOSQL
+
+          # 2) Create database if missing (CREATE DATABASE can't run inside a DO/transaction)
+          psql -v ON_ERROR_STOP=1 --username "$$POSTGRES_USER" --dbname "$$POSTGRES_DB" \
+            -v db="$database" -v usr="$user" <<'EOSQL'
+        SELECT format('CREATE DATABASE %I OWNER %I', :'db', :'usr')
+        WHERE NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = :'db')
+        \gexec
+        EOSQL
+
+          # 3) Grant privileges (idempotent)
+          psql -v ON_ERROR_STOP=1 --username "$$POSTGRES_USER" --dbname "$$POSTGRES_DB" \
+            -v db="$database" -v usr="$user" <<'EOSQL'
+        GRANT ALL PRIVILEGES ON DATABASE :"db" TO :"usr";
+        EOSQL
         }
 
         create_user_and_database "$${PGBACKWEB_POSTGRES_DB_NAME}" "$${PGBACKWEB_POSTGRES_USER}" "$${PGBACKWEB_POSTGRES_PASSWORD}"
