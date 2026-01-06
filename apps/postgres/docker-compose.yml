@@ -10,10 +10,10 @@ services:
     #   - "8085:8085" # Access the web interface at http://localhost:8085
     volumes:
       - /opt/docker-data/pgbackweb/backups:/backups # If you only use S3 destinations, you don't need this volume
+    env_file: pgbackweb.env
     environment:
       # Optional environment variables are ignored, see the configuration section below for more details
       PBW_ENCRYPTION_KEY: ${PBW_ENCRYPTION_KEY} # Change this to a strong key
-      PBW_POSTGRES_CONN_STRING: ${PBW_POSTGRES_CONN_STRING}
     depends_on:
       postgres:
         condition: service_healthy
