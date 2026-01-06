@@ -100,10 +100,19 @@ services:
         EOSQL
         }
 
-        create_user_and_database "$${PGBACKWEB_POSTGRES_DB_NAME}" "$${PGBACKWEB_POSTGRES_USER}" "$${PGBACKWEB_POSTGRES_PASSWORD}"
-        create_user_and_database "$${NETBOX_POSTGRES_DB_NAME}" "$${NETBOX_POSTGRES_USER}" "$${NETBOX_POSTGRES_PASSWORD}"
-        create_user_and_database "$${DIODE_POSTGRES_DB_NAME}" "$${DIODE_POSTGRES_USER}" "$${DIODE_POSTGRES_PASSWORD}"
-        create_user_and_database "$${HYDRA_POSTGRES_DB_NAME}" "$${HYDRA_POSTGRES_USER}" "$${HYDRA_POSTGRES_PASSWORD}"
+        services="$${POSTGRES_INIT_SERVICES:-}"
+        if [[ -z "$$services" ]]; then
+          echo "ERROR: POSTGRES_INIT_SERVICES is empty (expected e.g. 'PGBACKWEB NETBOX DIODE HYDRA')" >&2
+          exit 1
+        fi
+
+        for s in $$services; do
+          db_var="${s}_POSTGRES_DB_NAME"
+          user_var="${s}_POSTGRES_USER"
+          pass_var="${s}_POSTGRES_PASSWORD"
+          echo "Preparing database for $$s..."
+          create_user_and_database "$${!db_var}" "$${!user_var}" "$${!pass_var}"
+        done
         echo "PostgreSQL initialization script completed."
 
     command: |
