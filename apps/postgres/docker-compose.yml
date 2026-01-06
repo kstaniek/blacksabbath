@@ -4,6 +4,26 @@ networks:
   postgres-net:
     external: true
 services:
+  drawdb:
+    image: xinsodev/drawdb
+    # ports:
+    #   - 3000:80
+    restart: always
+    labels:
+      traefik.enable: true
+      traefik.http.routers.drawdb.rule: Host(`drawdb.home.staniek.name`)
+      traefik.http.routers.drawdb.entrypoints: websecure
+      traefik.http.routers.drawdb.tls.certresolver: letsencrypt
+      traefik.http.services.drawdb.loadbalancer.server.port: 80
+      glance.name: DrawDB
+      glance.icon: sh:database
+      glance.description: "Collaborative Drawing Database"
+      glance.url: https://drawdb.home.staniek.name
+      glance.id: postgres
+    networks:
+      - proxy-net
+      - postgres-net
+
   pgbackweb:
     image: eduardolat/pgbackweb:latest
     # ports:
