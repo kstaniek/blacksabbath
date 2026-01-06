@@ -1,0 +1,30 @@
+networks:
+  proxy-net:
+    external: true
+services:
+  homebox:
+    image: ghcr.io/hay-kot/homebox:latest
+#   image: ghcr.io/hay-kot/homebox:latest-rootless
+    restart: always
+    environment:
+    - HBOX_LOG_LEVEL=info
+    - HBOX_LOG_FORMAT=text
+    - HBOX_WEB_MAX_UPLOAD_SIZE=10
+    volumes:
+      - homebox-data:/data/
+    networks:
+      - proxy-net
+    labels:
+      traefik.enable: true
+      traefik.http.routers.homebox.rule: Host(`homebox.home.staniek.name`)
+      traefik.http.routers.homebox.entrypoints: websecure
+      traefik.http.routers.homebox.tls.certresolver: letsencrypt
+      traefik.http.services.homebox.loadbalancer.server.port: 7745
+      glance.name: Homebox
+      glance.icon: sh:homebox
+      glance.description: Homebox - The ultimate home server management interface
+      glance.url: https://homebox.home.staniek.name
+      glance.id: homebox
+
+volumes:
+  homebox-data:

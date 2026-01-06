@@ -44,6 +44,9 @@ stacks:
 
   grafana:
     root: apps/grafana
+  
+  homebox:
+    root: apps/homebox
 
   it-tools:
     root: apps/it-tools
