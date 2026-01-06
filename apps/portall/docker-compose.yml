@@ -1,0 +1,26 @@
+networks:
+  proxy-net:
+    external: true
+services:
+  portall:
+    image: need4swede/portall:latest
+    container_name: portall
+    # ports:
+    #   - "8080:8080"
+    # environment:
+    #   - SECRET_KEY=your_secret_key
+    volumes:
+      - ./instance:/app/instance
+    networks:
+      - proxy-net
+    labels:
+      traefik.enable: true
+      traefik.http.routers.portall.rule: Host(`portall.home.staniek.name`)
+      traefik.http.routers.portall.entrypoints: websecure
+      traefik.http.routers.portall.tls.certresolver: letsencrypt
+      traefik.http.services.portall.loadbalancer.server.port: 8080
+      glance.name: Portall
+      glance.icon: sh:portall
+      glance.description: Personal Portal
+      glance.url: https://portall.home.staniek.name
+      glance.id: portall

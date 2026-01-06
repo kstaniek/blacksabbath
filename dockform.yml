@@ -69,6 +69,12 @@ stacks:
       sops:
         - secrets.paperless.enc.env
 
+  portall:
+    root: apps/portall
+    secrets:
+      sops:
+        - secrets.portall.enc.env
+
   prometheus:
     root: apps/prometheus
 
