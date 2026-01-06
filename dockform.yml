@@ -45,6 +45,9 @@ stacks:
   grafana:
     root: apps/grafana
 
+  it-tools:
+    root: apps/it-tools
+
   kopia:
     root: apps/kopia
     secrets:
