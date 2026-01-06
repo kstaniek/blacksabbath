@@ -1,0 +1,27 @@
+networks:
+  proxy-net:
+    external: true
+
+services:
+  dockhand:
+    image: fnsys/dockhand:latest
+    container_name: dockhand
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - dockhand_data:/app/data
+    networks:
+      - proxy-net
+    labels:
+      traefik.enable: true
+      traefik.http.routers.dockhand.rule: Host(`dockhand.home.staniek.name`)
+      traefik.http.routers.dockhand.entrypoints: websecure
+      traefik.http.routers.dockhand.tls.certresolver: letsencrypt
+      traefik.http.services.dockhand.loadbalancer.server.port: 3000
+      glance.name: Dockhand
+      glance.icon: sh:dockhand
+      glance.description: Docker Management UI
+      glance.url: https://dockhand.home.staniek.name
+      glance.id: dockhand
+volumes:
+  dockhand_data:

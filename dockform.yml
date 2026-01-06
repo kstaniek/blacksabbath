@@ -30,6 +30,9 @@ stacks:
   cadvisor:
     root: apps/cadvisor
 
+  dockhand:
+    root: apps/dockhand
+    
   gitea:
     root: apps/gitea
 
